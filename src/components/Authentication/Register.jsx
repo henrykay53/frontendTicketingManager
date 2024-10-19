@@ -164,10 +164,6 @@ const Register = () => {
                         {errors.password?.type === "required" && (
                             <p role="alert">*required</p>
                         )}
-
-
-
-
                     </div>
 
                     <div className='w-full'>
@@ -205,7 +201,7 @@ const Register = () => {
                 </div>
 
                 <div className='flex justify-center'>
-                    <button className=' bg-yellow-500 hover:bg-yellow-300 text-white text-lg px-10 py-2 font-bold rounded-lg my-4 '>Create Account</button>
+                    <button className=' bg-yellow-400 hover:bg-yellow-500 transition text-white text-lg px-10 py-2 font-bold rounded-lg my-4 '>Create Account</button>
 
                 </div>
 
