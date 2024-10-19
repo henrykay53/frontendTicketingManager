@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {useDispatch} from 'react-redux';
-import {openModal} from '../../redux/slice/modalSlice/modalSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from '../../redux/slice/modalSlice/modalSlice'
 
 import NavBar from '../NavBar';
 import { Profile } from 'iconsax-react';
@@ -10,7 +10,9 @@ import TicketInfoModal from "../Modal/TicketInfoModal";
 const Home = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const dispatch = useDispatch();
+    const isModalOpen = useSelector((state) => state.modal.isOpen);
 
 
     const events = [
@@ -74,50 +76,54 @@ const Home = () => {
         event.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleViewMore = (event) => {
+        setSelectedEvent(event); // Store selected event
+        dispatch(openModal()); // Open the modal
+    };
+
+    const formatPrice = (price) =>
+        new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(price);
     return (
 
         <>
             <NavBar searchTerm={searchTerm} searchHandler={searchHandler} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 p-10">
-                {filteredEvents.map((event, index) => (
-                    <div
-                        key={index}
-                        className="w-[90%] p-5 mt-10 rounded-lg  bg-[#f9f9f9] shadow-lg"
-                    >
-                        <img
-                            src={GoldTicket}
-                            alt={event.name}
-                            className="w-full h-48 object-cover rounded-lg"
-                        />
-                        <p className="pt-2 text-2xl font-semibold">{event.name}</p>
-                        <p className="pt-2 text-xl text-gray-500 ">{event.location}</p>
-                        <p className="pt-2 text-xl font-bold">₦{event.price}</p>
-                        <div className='flex items-center pt-2 -ml-1 '>
-                            <Profile />
-
-                            <p className=" font-bold">{event.person}</p>
-
+                {filteredEvents.length === 0 ? (
+                    <p className="text-center col-span-full text-xl text-gray-500">
+                        No events found.
+                    </p>
+                ) : (
+                    filteredEvents.map((event, index) => (
+                        <div
+                            key={`${event.name}-${index}`}
+                            className="w-[90%] p-5 mt-10 rounded-lg bg-[#f9f9f9] shadow-lg"
+                        >
+                            <img
+                                src={GoldTicket}
+                                alt={event.name}
+                                className="w-full h-48 object-cover rounded-lg"
+                            />
+                            <p className="pt-2 text-2xl font-semibold">{event.name}</p>
+                            <p className="pt-2 text-xl text-gray-500">{event.location}</p>
+                            {/* <p className="pt-2 text-xl font-bold">{event.price}</p> */}
+                            <p className="pt-2 text-xl font-bold">{formatPrice(event.price)}</p>
+                            <div className="flex items-center pt-2 -ml-1">
+                                <Profile />
+                                <p className="font-bold">{event.person}</p>
+                            </div>
+                            <button
+                                onClick={() => handleViewMore(event)}
+                                className="font-bold text-white bg-yellow-400 py-2 px-4 mt-4 rounded-lg hover:bg-yellow-500 transition"
+                            >
+                                View More
+                            </button>
                         </div>
-
-                        <button 
-                        onClick={() => dispatch(openModal())}
-                        className="font-bold text-white bg-yellow-400 py-2 px-4 mt-4 rounded-lg hover:bg-yellow-500 transition">
-                            View More
-                        </button>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
+           
 
-            <TicketInfoModal />
-
-            {/* <TicketInfoModal
-                name={name}
-                price={price}
-                location={location}
-                person={person}
-            /> */}
-
-
+            {isModalOpen && <TicketInfoModal event={selectedEvent} />}
         </>
 
     )
