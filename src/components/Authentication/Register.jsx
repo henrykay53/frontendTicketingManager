@@ -1,223 +1,174 @@
-import React from 'react'
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeSlash } from 'iconsax-react';
-import { useForm } from "react-hook-form"
-
+import { useForm } from 'react-hook-form';
+import { registerUser } from './apis/authServices';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Register = () => {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const password = watch('password');
+  const confirmPassword = watch('confirm_password');
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm()
+  const togglePasswordVisibility = () => setIsPasswordVisible(prev => !prev);
 
-    const onSubmit = (data) => console.log(data)
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const password = watch("password");
-    const confirmPassword = watch("confirmPassword");
+  const validateAge = value => {
+    const selectedDate = new Date(value);
+    const today = new Date();
+    let age = today.getFullYear() - selectedDate.getFullYear();
+    if (
+      today.getMonth() < selectedDate.getMonth() ||
+      (today.getMonth() === selectedDate.getMonth() && today.getDate() < selectedDate.getDate())
+    ) {
+      age--;
+    }
+    return age >= 18 || 'You must be at least 18 years old.';
+  };
 
-    const validateAge = (value) => {
-        const selectedDate = new Date(value);
-        const today = new Date();
+  const validatePasswordsMatch = value => value === password || 'Passwords do not match';
 
-        const age = today.getFullYear() - selectedDate.getFullYear();
-        const monthDifference = today.getMonth() - selectedDate.getMonth();
-        const dayDifference = today.getDate() - selectedDate.getDate();
+  const onSubmit = async data => {
+    setIsLoading(true);
+    try {
+      const response = await registerUser(data);
+      toast.success('Registration successful! 🎉');
+    } catch (error) {
+      if (!navigator.onLine) {
+        toast.error('No internet connection. Please check and try again.');
+      } else {
+        toast.error('Registration failed. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        // Adjust age if the month or day is before today's date
-        if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
-            return age - 1 >= 18 || "You must be at least 18 years old.";
-        }
+  return (
+    <div className='bg-white shadow-md rounded-xl w-[90%] lg:w-[30%] mt-10 mx-auto p-8'>
+      <h1 className='text-4xl font-semibold text-yellow-500 text-center mb-6'>Register</h1>
 
-        return age >= 18 || "You must be at least 18 years old.";
-    };
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Name Fields */}
+        <div className='flex flex-col gap-6 mb-4'>
+          <input
+            {...register('first_name', { required: true })}
+            placeholder='First Name'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+          />
+          {errors.first_name && <p className='text-red-500 text-sm'>First name is required</p>}
 
-    const togglePasswordVisibility = () => {
-        setIsPasswordVisible((prevState) => !prevState);
-    };
-
-    const validatePasswordsMatch = (value) => {
-        return value === password || "Passwords do not match";
-    };
-
-
-    return (
-
-
-        <div className='bg-gray-100 py-10 mb-20 w-[90%] lg:w-[30%] mt-10 m-auto rounded-lg shadow-lg '>
-
-            <div className='flex items-center'>
-                <h1 className='text-3xl  text-yellow-400 ml-5 '>Register  </h1>
-
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
-
-
-                <div className=" flex flex-col gap-10 items-center mx-5 py-5">
-
-                    <div className='w-full'>
-                        <input
-                            {...register("firstName", { required: true })}
-                            placeholder='First name'
-                            className='w-full text-lg ring-2 ring-gray-300 focus:outline-yellow-500 p-2  rounded-sm'
-                            type="text" />
-
-                        {errors.firstName?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-
-                    </div>
-
-                    <div className='w-full'>
-                        <input
-                            {...register("lastName", { required: true })}
-
-                            placeholder='Last name'
-                            className='w-full text-lg  ring-2 ring-gray-300 focus:outline-yellow-500 p-2  rounded-sm'
-                            type="text" />
-
-                        {errors.lastName?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-
-                    </div>
-
-                </div>
-
-                <div className='flex flex-col gap-10 mx-5 items-center py-5 '>
-                    <select
-                        {...register("gender", { required: true })}
-                        className='text-gray-500 w-full p-3 ring-2 ring-gray-300 focus:outline-yellow-500 rounded-sm' name="gender">
-                        <option className='' value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                    {errors.gender?.type === "required" && (
-                        <p role="alert">*required</p>
-                    )}
-
-                    <div className='w-full'>
-                        <input
-                            {...register("phoneNumber", { required: true })}
-                            placeholder='Phone number' className='w-full text-lg  ring-2 ring-gray-300 focus:outline-yellow-500 p-2  rounded-sm' type="text" />
-                        {errors.phoneNumber?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-                    </div>
-                </div>
-
-                <div className='flex flex-col gap-10 mx-5 items-center py-5'>
-
-                    <div className='w-full'>
-                        <input
-                            {...register("email", { required: true })}
-                            placeholder='Email'
-                            className='w-full text-lg  ring-2 ring-gray-300 focus:outline-yellow-500 p-2  rounded-sm'
-                            type="text" />
-                        {errors.email?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-
-                       
-                    </div>
-
-                    <div className='w-full'>
-                        <input
-                            {...register("date", { required: true, validate: validateAge })}
-                            className='w-full p-3 ring-2 rounded-sm ring-gray-300 focus:outline-yellow-500'
-                            type="date" />
-
-                        {errors.date?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-                         {errors.date?.type === "validate" && (
-                            <p role="alert">{errors.date.message}</p>
-                        )}
-                    </div>
-
-
-
-
-                </div>
-
-                <div className='flex flex-col gap-10 mx-5 items-center py-5 pb-4'>
-                    <div className='w-full'>
-                        <input
-                            {...register("password", { required: true })}
-                            placeholder='Password' className='w-full text-lg  ring-2 ring-gray-300 focus:outline-yellow-500 p-2 rounded-sm'
-                            type={isPasswordVisible ? 'text' : 'password'} />
-                        {isPasswordVisible ? (
-                            <EyeSlash
-                                className='absolute top-[68%] right-[10%] lg:right-[37%] cursor-pointer'
-                                onClick={togglePasswordVisibility} // Toggle visibility
-                            />
-                        ) : (
-                            <Eye
-                                className='absolute top-[68%] right-[10%] lg:right-[37%] cursor-pointer'
-                                onClick={togglePasswordVisibility} // Toggle visibility
-                            />
-                        )}
-
-                        {errors.password?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-                    </div>
-
-                    <div className='w-full'>
-                        <input
-                            {...register("confirmPassword", { required: true, validate: validatePasswordsMatch })}
-
-                            placeholder='Confirm Password' className='w-full text-lg  ring-2 ring-gray-300 focus:outline-yellow-500 p-2 rounded-sm'
-                            type={isPasswordVisible ? "text" : "password"} />
-
-                        {isPasswordVisible ? (
-                            <EyeSlash
-                                className='absolute bottom-[20%] right-[10%] lg:right-[37%] cursor-pointer'
-                                onClick={togglePasswordVisibility} // Toggle visibility
-                            />
-                        ) : (
-                            <Eye
-                                className='absolute bottom-[20%] right-[10%] lg:right-[37%] cursor-pointer'
-                                onClick={togglePasswordVisibility} // Toggle visibility
-                            />
-                        )}
-
-                        {errors.confirmPassword?.type === "required" && (
-                            <p role="alert">*required</p>
-                        )}
-
-                        {errors.confirmPassword && errors.confirmPassword.type === "validate" && (
-                            <p role="alert">{errors.confirmPassword.message}</p>
-                        )}
-
-
-                    </div>
-
-
-
-                </div>
-
-                <div className='flex justify-center'>
-                    <button className=' bg-yellow-400 hover:bg-yellow-500 transition text-white text-lg px-10 py-2 font-bold rounded-lg my-4 '>Create Account</button>
-
-                </div>
-
-            </form>
-
-            <span className='ml-5 font-bold'>Already have an account? <Link to='/login'><span className='text-yellow-400'>Login</span></Link></span>
-
+          <input
+            {...register('last_name', { required: true })}
+            placeholder='Last Name'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+          />
+          {errors.last_name && <p className='text-red-500 text-sm'>Last name is required</p>}
         </div>
 
+        {/* Gender and Phone */}
+        <div className='flex flex-col gap-6 mb-4'>
+          <select
+            {...register('gender', { required: true })}
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 text-gray-500'
+          >
+            <option value=''>Select Gender</option>
+            <option value='male'>Male</option>
+            <option value='female'>Female</option>
+          </select>
+          {errors.gender && <p className='text-red-500 text-sm'>Gender is required</p>}
 
+          <input
+            {...register('phone', { required: true })}
+            placeholder='Phone Number'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            type='tel'
+          />
+          {errors.phone && <p className='text-red-500 text-sm'>Phone number is required</p>}
+        </div>
 
+        {/* Email and Date of Birth */}
+        <div className='flex flex-col gap-6 mb-4'>
+          <input
+            {...register('email', { required: true })}
+            placeholder='Email Address'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            type='email'
+          />
+          {errors.email && <p className='text-red-500 text-sm'>Email is required</p>}
 
+          <input
+            {...register('date_of_birth', { required: true, validate: validateAge })}
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            type='date'
+          />
+          {errors.date_of_birth && (
+            <p className='text-red-500 text-sm'>{errors.date_of_birth.message}</p>
+          )}
+        </div>
 
+        {/* Password and Confirm Password */}
+        <div className='flex flex-col gap-6 mb-6 relative'>
+          <input
+            {...register('password', { required: true })}
+            placeholder='Password'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            type={isPasswordVisible ? 'text' : 'password'}
+          />
+          {isPasswordVisible ? (
+            <EyeSlash
+              className='absolute top-[32%] right-3 cursor-pointer'
+              onClick={togglePasswordVisibility}
+            />
+          ) : (
+            <Eye
+              className='absolute top-[32%] right-3 cursor-pointer'
+              onClick={togglePasswordVisibility}
+            />
+          )}
+          {errors.password && <p className='text-red-500 text-sm'>Password is required</p>}
 
+          <input
+            {...register('confirm_password', {
+              required: true,
+              validate: validatePasswordsMatch,
+            })}
+            placeholder='Confirm Password'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            type={isPasswordVisible ? 'text' : 'password'}
+          />
+          {errors.confirm_password && (
+            <p className='text-red-500 text-sm'>{errors.confirm_password.message}</p>
+          )}
+        </div>
 
-    )
-}
+        {/* Submit Button */}
+        <button
+          type='submit'
+          disabled={isLoading}
+          className={`w-full py-3 rounded-lg text-white font-semibold ${
+            isLoading
+              ? 'bg-yellow-300 cursor-not-allowed'
+              : 'bg-yellow-500 hover:bg-yellow-600 transition'
+          }`}
+        >
+          {isLoading ? 'Registering...' : 'Register'}
+        </button>
+      </form>
+
+      <div className='text-center mt-6'>
+        <p className='text-gray-600'>
+          Already have an account?{' '}
+          <Link to='/login' className='text-yellow-500 font-medium hover:underline'>
+            Login
+          </Link>
+        </p>
+      </div>
+
+      <ToastContainer position='top-right' autoClose={3000} hideProgressBar={false} />
+    </div>
+  );
+};
 
 export default Register;
