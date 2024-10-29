@@ -4,18 +4,12 @@ import { Link } from 'react-router-dom';
 const NavBar = ({ searchTerm, searchHandler }) => {
   return (
     <div>
-      <header className="flex flex-col md:flex-row justify-between items-center mx-4 mt-4 space-y-4 md:space-y-0">
+      <header className="flex flex-col md:flex-row justify-between items-center mx-20 mt-4 space-y-4 md:space-y-0">
         {/* Logo */}
         <h1 className="font-bold text-2xl md:text-3xl">FrontendTicketingManager</h1>
 
         {/* Search Input */}
-        <input
-          className="ring-2 focus:outline-yellow-400 rounded-sm p-2 md:p-3 w-full md:w-[50%] transition"
-          type="text"
-          value={searchTerm}
-          onChange={searchHandler}
-          placeholder="Search events by name, category..."
-        />
+       
 
         {/* Buttons */}
         <div className="flex gap-2 md:gap-4">

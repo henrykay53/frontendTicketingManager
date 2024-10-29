@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import NavBar from "../NavBar";
+import SideNav from "../SideNav";
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../redux/slice/modalSlice/modalSlice';
-import NavBar from '../NavBar';
+
 import GoldTicket from '../../assets/images/gold.jpg';
 import TicketInfoModal from '../Modal/TicketInfoModal';
 
@@ -10,6 +12,7 @@ const Home = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const dispatch = useDispatch();
   const isModalOpen = useSelector((state) => state.modal.isOpen);
+  const isSideNavOpen = useSelector((state) => state.sideNav.isOpen); // Assuming you manage SideNav state in Redux
 
   const events = [
     {
@@ -86,9 +89,10 @@ const Home = () => {
 
   return (
     <>
-      <NavBar searchTerm={searchTerm} searchHandler={searchHandler} />
+      <NavBar />
+      <SideNav searchTerm={searchTerm} searchHandler={searchHandler} />
 
-      <div className="p-10">
+      <div className={`p-10 transition-all duration-300 ${isSideNavOpen ? 'ml-72' : ''}`}>
         {filteredEvents.length === 0 ? (
           <p className="text-center text-xl text-gray-500">
             No events found.
