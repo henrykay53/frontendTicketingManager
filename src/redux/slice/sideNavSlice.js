@@ -1,13 +1,14 @@
 // src/redux/slice/sideNavSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-  isOpen: false,
-};
+
 
 const sideNavSlice = createSlice({
   name: 'sideNav',
-  initialState,
+  initialState: {
+    isOpen: false,
+  },
+
   reducers: {
     toggleSideNav: (state) => {
       state.isOpen = !state.isOpen;
@@ -20,6 +21,30 @@ const sideNavSlice = createSlice({
     },
   },
 });
+
+
+
+const seatCapacity = createSlice({
+
+  name: "SeatCapacity",
+  initialState: {
+    isSeatAvailable: false,
+
+  },
+
+  reducers: {
+    isAvailable: (state) => {
+      state.isSeatAvailable = true;
+
+    },
+
+    isNotAvailable: (state) => {
+      state.isSeatAvailable  = false;
+    }
+  }
+})
+
+
 
 export const { toggleSideNav, openSideNav, closeSideNav } = sideNavSlice.actions;
 export default sideNavSlice.reducer;

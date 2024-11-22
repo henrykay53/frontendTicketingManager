@@ -21,8 +21,12 @@ const SignIn = () => {
     setErrorMessage('');
     try {
       const response = await loginUser(data);
+      console.log(response);
+      
       toast.success('Login successful! 🎉');
+      localStorage.setItem('token', response.data.token);
       navigate('/'); // Redirect to home page
+ 
     } catch (error) {
       toast.error('Login failed. Please try again.');
       setErrorMessage(error);
