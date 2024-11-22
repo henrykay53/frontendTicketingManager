@@ -21,8 +21,12 @@ const SignIn = () => {
     setErrorMessage('');
     try {
       const response = await loginUser(data);
+      console.log(response);
+      
       toast.success('Login successful! 🎉');
+      localStorage.setItem('token', response.data.token);
       navigate('/'); // Redirect to home page
+ 
     } catch (error) {
       toast.error('Login failed. Please try again.');
       setErrorMessage(error);
@@ -46,7 +50,7 @@ const SignIn = () => {
           <input
             {...register('email', { required: true })}
             placeholder='Enter your email'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition'
+            className='w-full p-3 border border-gray-300 rounded-lg   focus:outline-yellow-500 transition'
             type='email'
           />
           {errors.email?.type === 'required' && (
@@ -59,7 +63,7 @@ const SignIn = () => {
           <input
             {...register('password', { required: true })}
             placeholder='Enter your password'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition'
+            className='w-full p-3 border border-gray-300 rounded-lg  focus:outline-yellow-500  transition'
             type={isPasswordVisible ? 'text' : 'password'}
           />
           <div className='absolute right-3 top-10 cursor-pointer'>

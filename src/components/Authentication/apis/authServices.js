@@ -10,6 +10,7 @@ export const loginUser = async (credentials) => {
     try {
         const response = await axios.post(`${API_URL}/login`, credentials);
         return response.data; // Return the response data
+        
     } catch (error) {
         throw error.response ? error.response.data.message : 'Network error, please try again.';
     }

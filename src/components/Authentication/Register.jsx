@@ -55,14 +55,14 @@ const Register = () => {
           <input
             {...register('first_name', { required: true })}
             placeholder='First Name'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            className='w-full p-3 border border-gray-300 rounded-lg  focus:outline-yellow-500'
           />
           {errors.first_name && <p className='text-red-500 text-sm'>First name is required</p>}
 
           <input
             {...register('last_name', { required: true })}
             placeholder='Last Name'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500'
           />
           {errors.last_name && <p className='text-red-500 text-sm'>Last name is required</p>}
         </div>
@@ -71,7 +71,7 @@ const Register = () => {
         <div className='flex flex-col gap-6 mb-4'>
           <select
             {...register('gender', { required: true })}
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 text-gray-500'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500 text-gray-500'
           >
             <option value=''>Select Gender</option>
             <option value='male'>Male</option>
@@ -82,7 +82,7 @@ const Register = () => {
           <input
             {...register('phone', { required: true })}
             placeholder='Phone Number'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500'
             type='tel'
           />
           {errors.phone && <p className='text-red-500 text-sm'>Phone number is required</p>}
@@ -93,14 +93,14 @@ const Register = () => {
           <input
             {...register('email', { required: true })}
             placeholder='Email Address'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500'
             type='email'
           />
           {errors.email && <p className='text-red-500 text-sm'>Email is required</p>}
 
           <input
             {...register('date_of_birth', { required: true, validate: validateAge })}
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+            className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500'
             type='date'
           />
           {errors.date_of_birth && (
@@ -109,40 +109,57 @@ const Register = () => {
         </div>
 
         {/* Password and Confirm Password */}
-        <div className='flex flex-col gap-6 mb-6 relative'>
-          <input
-            {...register('password', { required: true })}
-            placeholder='Password'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
-            type={isPasswordVisible ? 'text' : 'password'}
-          />
-          {isPasswordVisible ? (
-            <EyeSlash
-              className='absolute top-[32%] right-3 cursor-pointer'
-              onClick={togglePasswordVisibility}
+        <div className='flex flex-col gap-6 mb-6'>
+          {/* Password Field */}
+          <div className='relative'>
+            <input
+              {...register('password', { required: true })}
+              placeholder='Password'
+              className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500 pr-10'
+              type={isPasswordVisible ? 'text' : 'password'}
             />
-          ) : (
-            <Eye
-              className='absolute top-[32%] right-3 cursor-pointer'
-              onClick={togglePasswordVisibility}
-            />
-          )}
-          {errors.password && <p className='text-red-500 text-sm'>Password is required</p>}
+            {isPasswordVisible ? (
+              <EyeSlash
+                className='absolute top-[50%] right-3 transform -translate-y-1/2 cursor-pointer'
+                onClick={togglePasswordVisibility}
+              />
+            ) : (
+              <Eye
+                className='absolute top-[50%] right-3 transform -translate-y-1/2 cursor-pointer'
+                onClick={togglePasswordVisibility}
+              />
+            )}
+            {errors.password && <p className='text-red-500 text-sm'>Password is required</p>}
+          </div>
 
-          <input
-            {...register('confirm_password', {
-              required: true,
-              validate: validatePasswordsMatch,
-            })}
-            placeholder='Confirm Password'
-            className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
-            type={isPasswordVisible ? 'text' : 'password'}
-          />
-          {errors.confirm_password && (
-            <p className='text-red-500 text-sm'>{errors.confirm_password.message}</p>
-          )}
+          {/* Confirm Password Field */}
+          <div className='relative'>
+            <input
+              {...register('confirm_password', {
+                required: true,
+                validate: validatePasswordsMatch,
+              })}
+              placeholder='Confirm Password'
+              className='w-full p-3 border border-gray-300 rounded-lg focus:outline-yellow-500 pr-10'
+              type={isPasswordVisible ? 'text' : 'password'}
+            />
+            {isPasswordVisible ? (
+              <EyeSlash
+                className='absolute top-[50%] right-3 transform -translate-y-1/2 cursor-pointer'
+                onClick={togglePasswordVisibility}
+              />
+            ) : (
+              <Eye
+                className='absolute top-[50%] right-3 transform -translate-y-1/2 cursor-pointer'
+                onClick={togglePasswordVisibility}
+              />
+            )}
+            {errors.confirm_password && (
+              <p className='text-red-500 text-sm'>Password is required</p>
+            )}
+          </div>
         </div>
-
+        
         {/* Submit Button */}
         <button
           type='submit'

@@ -1,37 +1,133 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/slice/usersSlice';
+import { HambergerMenu, CloseSquare } from 'iconsax-react';
+import ConfirmLogoutModal from '../components/Modal/ConfirmLogoutModal';
 
-const NavBar = ({ searchTerm, searchHandler }) => {
+const NavBar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const userName = useSelector((state) => state.user.name);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleLogout = () => setIsModalVisible(true);
+
+  const confirmLogout = () => {
+    localStorage.removeItem('token');
+    dispatch(logout());
+    setIsMenuOpen(false);
+    setIsLoggedIn(false);
+    setIsModalVisible(false);
+    navigate('/');
+  };
+
+  const cancelLogout = () => setIsModalVisible(false);
+
+  const handleLogin = () => {
+    setIsMenuOpen(false);
+    navigate('/login');
+  };
+
   return (
-    <div>
-      <header className="flex flex-col md:flex-row justify-between items-center mx-4 mt-4 space-y-4 md:space-y-0">
+    <>
+      <nav className="bg-yellow-500 px-6 py-4 flex justify-between items-center">
         {/* Logo */}
-        <h1 className="font-bold text-2xl md:text-3xl">FrontendTicketingManager</h1>
-
-        {/* Search Input */}
-        <input
-          className="ring-2 focus:outline-yellow-400 rounded-sm p-2 md:p-3 w-full md:w-[50%] transition"
-          type="text"
-          value={searchTerm}
-          onChange={searchHandler}
-          placeholder="Search events by name, category..."
-        />
-
-        {/* Buttons */}
-        <div className="flex gap-2 md:gap-4">
-          <Link to="/login">
-            <button className="bg-yellow-400 hover:bg-yellow-500 transition font-bold text-white py-2 px-8 md:px-14 rounded-lg w-full md:w-auto">
-              Login
-            </button>
-          </Link>
-          <Link to="/register">
-            <button className="bg-yellow-400 hover:bg-yellow-500 transition font-bold text-white py-2 px-8 md:px-14 rounded-lg w-full md:w-auto">
-              Register
-            </button>
-          </Link>
+        <div className="text-white text-2xl font-bold">
+          <Link to="/">TicketMaster</Link>
         </div>
-      </header>
-    </div>
+
+        {/* Hamburger Icon */}
+        <div className="md:hidden text-white" onClick={toggleMenu}>
+          {isMenuOpen ? (
+            <CloseSquare size="32" color="#ffffff" variant="Bold" />
+          ) : (
+            <HambergerMenu size="32" color="#ffffff" variant="Bold" />
+          )}
+        </div>
+
+        {/* Navigation Links */}
+        <ul
+          className={`absolute top-16 left-0 w-full bg-yellow-500 flex flex-col space-y-4 items-center transition-transform transform ${
+            isMenuOpen ? 'translate-y-0' : '-translate-y-full'
+          } md:relative md:top-0 md:flex md:flex-row md:space-y-0 md:space-x-8 md:bg-transparent md:w-auto md:transform-none`}
+        >
+          <li>
+            <Link
+              to="/"
+              className="text-white text-lg hover:text-yellow-200"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/events"
+              className="text-white text-lg hover:text-yellow-200"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Events
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/about"
+              className="text-white text-lg hover:text-yellow-200"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              About
+            </Link>
+          </li>
+
+          {/* Login/Logout */}
+          {isLoggedIn ? (
+            <>
+              <li>
+                <span className="text-white text-lg">
+                  Hello, {userName || 'User'}
+                </span>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="px-10 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <li>
+              <button
+                onClick={handleLogin}
+                className="px-10 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 transition"
+              >
+                Login
+              </button>
+            </li>
+          )}
+        </ul>
+      </nav>
+
+      {/* Confirm Logout Modal */}
+      {isModalVisible && (
+        <ConfirmLogoutModal
+          isVisible={isModalVisible}
+          onClose={cancelLogout}
+          onConfirm={confirmLogout}
+        />
+      )}
+    </>
   );
 };
 
