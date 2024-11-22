@@ -100,7 +100,7 @@ const NavBar = () => {
               <li>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition"
+                  className="px-10 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition"
                 >
                   Logout
                 </button>
@@ -110,7 +110,7 @@ const NavBar = () => {
             <li>
               <button
                 onClick={handleLogin}
-                className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 transition"
+                className="px-10 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 transition"
               >
                 Login
               </button>
