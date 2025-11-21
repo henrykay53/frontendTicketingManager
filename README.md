@@ -1,5 +1,11 @@
 Ticketing Manager
 
+Summary
+
+A ticketing manager that gives uses the ability to view events based on their intrests, from sports to fashion events by filtering available tickets based on the categories selected. Ticket details are protected and can only be viewed by authenticated users.
+
+Users can then select the number of tickets they want and pay for it.
+
 Stack
 1. React
 2. Tailwind
@@ -16,8 +22,6 @@ Features
 2. Payment
 3. Filtering
 
-Summary
 
-A ticketing manager that gives uses the ability to view events based on their intrests, from sports to fashion events by filtering available tickets based on the categories selected. Ticket details are protected and can only be viewed by authenticated users.
 
-Users can then select the number of tickets they want and pay for it.
+
